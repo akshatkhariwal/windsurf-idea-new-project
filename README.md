@@ -182,3 +182,68 @@ Build the project with:
 
 ```bash
 mvn clean package
+```
+
+## Deployment
+
+The application can be deployed to any environment that supports Java applications:
+
+### JAR Deployment
+After building the application, deploy the JAR file:
+```bash
+java -jar target/windsurf-spring-app-0.0.1-SNAPSHOT.jar
+```
+
+### Environment Configuration
+You can customize the application using environment variables or by providing an external `application.properties` file:
+```bash
+java -jar target/windsurf-spring-app-0.0.1-SNAPSHOT.jar --spring.config.location=file:/path/to/application.properties
+```
+
+### Profiles
+The application supports different Spring profiles:
+- `dev` (default): Includes sample data initialization
+- `test`: Used for testing
+- `prod`: For production deployment (disable H2 console, etc.)
+
+To activate a specific profile:
+```bash
+java -jar target/windsurf-spring-app-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+
+## API Examples
+
+### Creating a Product
+```bash
+curl -X POST http://localhost:8080/api/products \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "New Smartphone",
+    "description": "Latest model with advanced features",
+    "price": 799.99,
+    "stockQuantity": 25,
+    "categoryId": 1
+  }'
+```
+
+### Searching Products by Category
+```bash
+curl http://localhost:8080/api/products/category/1
+```
+
+### Updating Product Stock
+```bash
+curl -X PATCH "http://localhost:8080/api/products/1/stock?quantity=50"
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
