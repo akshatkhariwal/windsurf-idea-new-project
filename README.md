@@ -10,6 +10,11 @@ A Spring Boot web application created with Windsurf IDE.
 - H2 In-Memory Database
 - Maven build system
 - Java 17
+- Comprehensive domain model with JPA entities
+- RESTful API endpoints for product and category management
+- Service layer with business logic
+- Sample data initialization for development
+- Behavior-driven testing with Cucumber
 
 ## Getting Started
 
@@ -38,8 +43,9 @@ java -jar target/windsurf-spring-app-0.0.1-SNAPSHOT.jar
 ### Accessing the Application
 
 - Main application: http://localhost:8080
-- Hello endpoint: http://localhost:8080/hello?name=YourName
-- Health check: http://localhost:8080/health
+- REST API endpoints:
+  - Products: http://localhost:8080/api/products
+  - Categories: http://localhost:8080/api/categories
 - H2 Database Console: http://localhost:8080/h2-console
 
 ### H2 Database Configuration
@@ -56,19 +62,115 @@ src/
 │   ├── java/
 │   │   └── com/example/windsurfspringapp/
 │   │       ├── WindsurfSpringAppApplication.java
-│   │       └── controller/
-│   │           └── HelloController.java
+│   │       ├── config/
+│   │       │   └── DataInitializer.java
+│   │       ├── controller/
+│   │       │   ├── ProductController.java
+│   │       │   └── CategoryController.java
+│   │       ├── model/
+│   │       │   ├── Product.java
+│   │       │   └── Category.java
+│   │       ├── repository/
+│   │       │   ├── ProductRepository.java
+│   │       │   └── CategoryRepository.java
+│   │       └── service/
+│   │           ├── ProductService.java
+│   │           └── CategoryService.java
 │   └── resources/
 │       └── application.properties
 └── test/
-    └── java/
-        └── com/example/windsurfspringapp/
-            └── WindsurfSpringAppApplicationTests.java
+    ├── java/
+    │   └── com/example/windsurfspringapp/
+    │       ├── WindsurfSpringAppApplicationTests.java
+    │       ├── controller/
+    │       │   ├── ProductControllerTest.java
+    │       │   └── CategoryControllerTest.java
+    │       ├── cucumber/
+    │       │   ├── CucumberTestRunner.java
+    │       │   ├── config/
+    │       │   │   └── CucumberSpringConfiguration.java
+    │       │   └── steps/
+    │       │       ├── ProductStepDefinitions.java
+    │       │       └── CategoryStepDefinitions.java
+    │       ├── repository/
+    │       │   ├── ProductRepositoryTest.java
+    │       │   └── CategoryRepositoryTest.java
+    │       └── service/
+    │           ├── ProductServiceTest.java
+    │           └── CategoryServiceTest.java
+    └── resources/
+        └── features/
+            ├── product_management.feature
+            └── category_management.feature
 ```
+
+## Domain Model
+
+The application manages products and categories with the following relationships:
+- A Category can have multiple Products
+- Each Product belongs to one Category
+
+### Product Entity
+- id: Long (primary key)
+- name: String
+- description: String
+- price: BigDecimal
+- stockQuantity: Integer
+- category: Category (many-to-one relationship)
+
+### Category Entity
+- id: Long (primary key)
+- name: String (unique)
+- description: String
+- products: List<Product> (one-to-many relationship)
+
+## REST API Endpoints
+
+### Products
+- GET /api/products - List all products
+- GET /api/products/{id} - Get product by ID
+- POST /api/products - Create a new product
+- PUT /api/products/{id} - Update a product
+- DELETE /api/products/{id} - Delete a product
+- GET /api/products/search?name={name} - Search products by name
+- GET /api/products/category/{categoryId} - Find products by category
+- GET /api/products/price?maxPrice={maxPrice} - Find products by maximum price
+- PATCH /api/products/{id}/stock?quantity={quantity} - Update product stock
+- GET /api/products/low-stock?threshold={threshold} - Find low stock products
+
+### Categories
+- GET /api/categories - List all categories
+- GET /api/categories/{id} - Get category by ID
+- POST /api/categories - Create a new category
+- PUT /api/categories/{id} - Update a category
+- DELETE /api/categories/{id} - Delete a category
+- GET /api/categories/search?name={name} - Search categories by name
+- GET /api/categories/with-products - Find categories with products
+- GET /api/categories/product-counts - Get product counts per category
+
+## Sample Data
+
+When running with the "dev" profile (default), the application initializes with sample data:
+- Categories: Electronics, Clothing, Books
+- Products: Several products in each category
 
 ## Testing
 
+### Unit and Integration Tests
+
 Run tests with:
+
+```bash
+mvn test
+```
+
+### Behavior-Driven Tests (Cucumber)
+
+The application includes Cucumber tests for behavior-driven development:
+- Feature files in `src/test/resources/features/`
+- Step definitions in `src/test/java/com/example/windsurfspringapp/cucumber/steps/`
+
+Run Cucumber tests with:
 
 ```bash
 mvn test
